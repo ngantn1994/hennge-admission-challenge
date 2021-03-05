@@ -5,11 +5,10 @@
         <div class="calendar-box">
           <CalendarIcon class="calendar-icon"/>
         </div>
-        <div class="date-box" contenteditable="true">
-          2020/1/1 - 2020/1/1
-        </div>
+        <div id="date-box" class="date-box" contenteditable="true"
+          @keyup.enter="updateSortFilter"></div>
       </div>
-      <div class="search-box">
+      <div class="search-box" @click="updateSortFilter()">
         <SearchIcon class="search-icon"/>
       </div>
     </div>
@@ -21,17 +20,49 @@
 import CalendarIcon from '../assets/icon_calender.svg';
 import SearchIcon from '../assets/icon_search.svg';
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+function getDateFromString(dateStr) {
+  const testDate = new Date(dateStr);
+  if (testDate instanceof Date && !Number.isNaN(testDate)) {
+    if (!Number.isNaN(testDate.getTime())) {
+      return testDate;
+    }
+  }
+  return today;
+}
+
+function getFormattedDate(date) {
+  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+}
+
 export default {
   name: 'DatePicker',
   components: {
     CalendarIcon,
     SearchIcon,
   },
-  props: {
-    initialPeriod: {
-      type: String,
-      required: false,
+  methods: {
+    updateSortFilter() {
+      const dateBox = document.getElementById('date-box');
+      let currentPeriodStr = dateBox.innerText;
+      const dates = currentPeriodStr.split('-');
+      const newStartDate = getDateFromString(dates[0]);
+      const newEndDate = getDateFromString(dates[1]);
+      this.$store.dispatch({
+        type: 'updateDatePicker',
+        period: {
+          startDate: newStartDate,
+          endDate: newEndDate,
+        },
+      });
+      currentPeriodStr = `${getFormattedDate(newStartDate)} - ${getFormattedDate(newEndDate)}`;
+      dateBox.innerText = currentPeriodStr;
     },
+  },
+  mounted() {
+    this.updateSortFilter();
   },
 };
 </script>

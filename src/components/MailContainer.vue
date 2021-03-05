@@ -1,17 +1,17 @@
 <template>
   <div class="mail-container">
-    <div v-if="mailList.length > 0">
-      <div class="result-number">
-        Results: {{mailList.length}} mail(s)
+    <div class="result-number">
+      Results: {{mailList.length}} mail(s)
+    </div>
+    <div class="sort-bar">
+      <div v-for="(sort, index) in sorts" :key="index" @click="updateSort(index)"
+        :class="{'sort-bar-item': true, 'sort-active': index === activeSort}">
+        {{sort}}
+        <ActiveIcon v-if="index === activeSort" class="active-icon"/>
       </div>
-      <div class="sort-bar">
-        <div v-for="(filter, index) in filters" :key="index" @click="updateFilter(index)"
-          :class="{'sort-bar-item': true, 'filter-active': index === activeFilter}">
-          {{filter}}
-          <ActiveIcon v-if="index === activeFilter" class="active-icon"/>
-        </div>
-      </div>
-      <div class="mail-content-box">
+    </div>
+    <div class="mail-content-box">
+      <div class="mail-content-long-box">
         <MailContent v-for="(mail, index) in mailList" :key="index"
           class="mail-content" :content="mail" :uniqueIndex="index"/>
       </div>
@@ -28,6 +28,23 @@ const SORT_RECIPIENT = 'To';
 const SORT_TITLE = 'Subject';
 const SORT_DATE = 'Date';
 
+function isInPeriod(dateToCheck, period) {
+  if (dateToCheck instanceof Date && !Number.isNaN(dateToCheck)) {
+    if (!Number.isNaN(dateToCheck.getTime())) {
+      // because the "getTime" function is used to compare,
+      // the end date need to be the end of the day
+      // which is today + 1 day and no equal
+      /* eslint prefer-const: 0 */
+      let endDateToCheck = new Date(period.endDate);
+      endDateToCheck.setDate(endDateToCheck.getDate() + 1);
+
+      return dateToCheck.getTime() >= period.startDate.getTime()
+        && dateToCheck.getTime() < endDateToCheck.getTime();
+    }
+  }
+  return false;
+}
+
 export default {
   name: 'MailContainer',
   components: {
@@ -35,7 +52,7 @@ export default {
     MailContent,
   },
   props: {
-    mailList: {
+    originalMailList: {
       type: Array,
       require: true,
     },
@@ -46,22 +63,38 @@ export default {
   },
   data() {
     return {
-      filters: [SORT_SENDER, SORT_RECIPIENT, SORT_TITLE, SORT_DATE],
-      filterProperties: ['sender', 'recipient', 'title', 'timestamp'],
-      activeFilter: Number.isInteger(Number(this.sortType)) ? Number(this.sortType) : 3,
+      sorts: [SORT_SENDER, SORT_RECIPIENT, SORT_TITLE, SORT_DATE],
+      sortProperties: ['sender', 'recipient', 'title', 'timestamp'],
+      activeSort: Number.isInteger(Number(this.sortType)) ? Number(this.sortType) : 3,
+      mailList: [...this.originalMailList],
     };
   },
   mounted() {
-    this.updateFilter(this.activeFilter);
+    this.updateSort(this.activeSort);
+    this.updateFilter();
+  },
+  computed: {
+    filterStartDate() {
+      return this.$store.getters.getPeriod.startDate;
+    },
+    filterEndDate() {
+      return this.$store.getters.getPeriod.endDate;
+    },
+    period() {
+      return {
+        startDate: this.filterStartDate,
+        endDate: this.filterEndDate,
+      };
+    },
   },
   methods: {
-    updateFilter(value) {
-      this.activeFilter = value;
-      const activeProperty = this.filterProperties[this.activeFilter];
-      const activeFilterName = this.filters[this.activeFilter];
+    updateSort(value) {
+      this.activeSort = value;
+      const activeProperty = this.sortProperties[this.activeSort];
+      const activeSortName = this.sorts[this.activeSort];
 
       /* eslint no-else-return: 0 */
-      if (activeFilterName === SORT_DATE) {
+      if (activeSortName === SORT_DATE) {
         this.mailList.sort(
           (a, b) => {
             const aDate = new Date(a[activeProperty]);
@@ -74,7 +107,7 @@ export default {
             }
           },
         );
-      } else if (activeFilterName === SORT_RECIPIENT) {
+      } else if (activeSortName === SORT_RECIPIENT) {
         // since the recipients are stored in an array
         // for now it'll be sort by the first recipient
         this.mailList.sort(
@@ -91,6 +124,21 @@ export default {
           (a, b) => (a[activeProperty].toString().localeCompare(b[activeProperty].toString())),
         );
       }
+    },
+    updateFilter() {
+      /* eslint function-paren-newline: 0 */
+      // in the real case, this might be a call to get the data from server instead
+      // if the email list is frequently updated
+      this.mailList = this.originalMailList.filter(
+        (mail) => (isInPeriod(new Date(mail.timestamp), this.period)));
+    },
+  },
+  watch: {
+    filterStartDate() {
+      this.updateFilter();
+    },
+    filterEndDate() {
+      this.updateFilter();
     },
   },
 };
@@ -142,7 +190,7 @@ export default {
   border-right: 1px solid #000;
   display: inline-block;
 }
-.filter-active {
+.sort-active {
   color: #000;
 }
 .active-icon {
@@ -155,7 +203,12 @@ export default {
 }
 .mail-content-box {
   width: 100%;
-  max-height: 100% - 54px;
+  max-height: calc(100% - 84px);
   overflow-y: auto;
+  position: relative;
+}
+.mail-content-long-box {
+  width: 100%;
+  position: relative;
 }
 </style>
