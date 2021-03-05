@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import mailProperties from '../data/mailProperties';
 import ActiveIcon from '../assets/icon_arrow01.svg';
 import MailContent from './MailContent.vue';
 
@@ -66,7 +67,8 @@ export default {
   data() {
     return {
       sorts: [SORT_SENDER, SORT_RECIPIENT, SORT_TITLE, SORT_DATE],
-      sortProperties: ['sender', 'recipient', 'title', 'timestamp'],
+      sortProperties: [mailProperties.SENDER, mailProperties.RECIPIENT,
+        mailProperties.TITLE, mailProperties.TIMESTAMP],
       sortPcBoxWidth: ['20%', '25%', '40%', '15%'],
       activeSort: Number.isInteger(Number(this.sortType)) ? Number(this.sortType) : 3,
       mailList: [...this.originalMailList],
@@ -154,7 +156,7 @@ export default {
       // in the real case, this might be a call to get the data from server instead
       // if the email list is frequently updated
       this.mailList = this.originalMailList.filter(
-        (mail) => (isInPeriod(new Date(mail.timestamp), this.period)));
+        (mail) => (isInPeriod(new Date(mail[mailProperties.TIMESTAMP]), this.period)));
     },
   },
   watch: {

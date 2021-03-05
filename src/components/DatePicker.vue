@@ -48,15 +48,20 @@ export default {
       const dateBox = document.getElementById('date-box');
       let currentPeriodStr = dateBox.innerText;
       const dates = currentPeriodStr.split('-');
-      const newStartDate = getDateFromString(dates[0]);
-      const newEndDate = getDateFromString(dates[1]);
-      this.$store.dispatch({
-        type: 'updateDatePicker',
-        period: {
-          startDate: newStartDate,
-          endDate: newEndDate,
-        },
-      });
+      let newStartDate = new Date(this.$store.getters.getPeriod.startDate);
+      let newEndDate = new Date(this.$store.getters.getPeriod.endDate);
+      if (dates.length === 2) {
+        newStartDate = getDateFromString(dates[0]);
+        newEndDate = getDateFromString(dates[1]);
+
+        this.$store.dispatch({
+          type: 'updateDatePicker',
+          period: {
+            startDate: newStartDate,
+            endDate: newEndDate,
+          },
+        });
+      }
       currentPeriodStr = `${getFormattedDate(newStartDate)} - ${getFormattedDate(newEndDate)}`;
       dateBox.innerText = currentPeriodStr;
     },
@@ -127,6 +132,7 @@ export default {
   top: 0px;
   background: #f5f5f5;
   border-left: 2px solid #d1d1d1;
+  cursor: pointer;
 }
 .search-icon {
   width: auto;

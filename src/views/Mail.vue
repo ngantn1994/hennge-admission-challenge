@@ -1,23 +1,22 @@
 <template>
-  <div class="home">
-    <MailPage/>
+  <div class="mail">
+    <MailBody/>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import MailPage from '@/components/MailPage.vue';
+import MailBody from '@/components/MailBody.vue';
 
 export default {
-  name: 'Home',
+  name: 'Mail',
   components: {
-    MailPage,
+    MailBody,
   },
 };
 </script>
 
 <style scoped>
-.home {
+.mail {
   width: 100%;
   height: 100%;
   position: absolute;
