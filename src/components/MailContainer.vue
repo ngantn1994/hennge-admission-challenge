@@ -1,11 +1,12 @@
 <template>
   <div class="mail-container">
     <div class="result-number">
-      Results: {{mailList.length}} mail(s)
+      Results: <span class="bigger-text">{{mailList.length}}</span>mail(s)
     </div>
     <div class="sort-bar">
       <div v-for="(sort, index) in sorts" :key="index" @click="updateSort(index)"
-        :class="{'sort-bar-item': true, 'sort-active': index === activeSort}">
+        :class="{'sort-bar-item': true, 'sort-active': index === activeSort}"
+        :id="`sort-bar-item-${sortProperties[index]}`">
         {{sort}}
         <ActiveIcon v-if="index === activeSort" class="active-icon"/>
       </div>
@@ -13,7 +14,8 @@
     <div class="mail-content-box">
       <div class="mail-content-long-box">
         <MailContent v-for="(mail, index) in mailList" :key="index"
-          class="mail-content" :content="mail" :uniqueIndex="index"/>
+          class="mail-content" :content="mail" :uniqueIndex="index"
+          :sortIndex="activeSort"/>
       </div>
     </div>
   </div>
@@ -65,11 +67,19 @@ export default {
     return {
       sorts: [SORT_SENDER, SORT_RECIPIENT, SORT_TITLE, SORT_DATE],
       sortProperties: ['sender', 'recipient', 'title', 'timestamp'],
+      sortPcBoxWidth: ['20%', '25%', '40%', '15%'],
       activeSort: Number.isInteger(Number(this.sortType)) ? Number(this.sortType) : 3,
       mailList: [...this.originalMailList],
     };
   },
+  created() {
+    window.addEventListener('resize', this.updateSortBarItems);
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.updateSortBarItems);
+  },
   mounted() {
+    this.updateSortBarItems();
     this.updateSort(this.activeSort);
     this.updateFilter();
   },
@@ -88,6 +98,20 @@ export default {
     },
   },
   methods: {
+    updateSortBarItems() {
+      if (window.screen.width >= 992) {
+        /* eslint no-plusplus: 0 */
+        for (let index = 0; index < this.sortProperties.length; index++) {
+          const sortBarItem = document.getElementById(`sort-bar-item-${this.sortProperties[index]}`);
+          sortBarItem.style.width = this.sortPcBoxWidth[index];
+        }
+      } else {
+        for (let index = 0; index < this.sortProperties.length; index++) {
+          const sortBarItem = document.getElementById(`sort-bar-item-${this.sortProperties[index]}`);
+          sortBarItem.style.width = '';
+        }
+      }
+    },
     updateSort(value) {
       this.activeSort = value;
       const activeProperty = this.sortProperties[this.activeSort];
@@ -161,12 +185,15 @@ export default {
 }
 .result-number {
   padding-left: 30px;
-  width: calc(100% - 23px);
+  width: calc(100% - 30px);
   height: 30px;
   text-align: left;
   color: #666666;
   font-size: 18px;
   font-weight: bold;
+}
+.bigger-text {
+  font-size: 24px;
 }
 .sort-bar {
   width: calc(100% - 20px);
@@ -180,6 +207,7 @@ export default {
   color: #666666;
   border-top: 2px solid #d1d1d1;
   border-bottom: 2px solid #d1d1d1;
+  position: relative;
 }
 .sort-bar-item {
   height: 20px;
@@ -189,6 +217,7 @@ export default {
   width: fit-content;
   border-right: 1px solid #000;
   display: inline-block;
+  cursor: pointer;
 }
 .sort-active {
   color: #000;
@@ -210,5 +239,15 @@ export default {
 .mail-content-long-box {
   width: 100%;
   position: relative;
+}
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .result-number {
+    padding-left: 0px;
+  }
+  .sort-bar-item {
+    border: none;
+    padding: 0px;
+  }
 }
 </style>

@@ -61,4 +61,15 @@ export default {
 .mail-container {
   max-width: 100vw;
 }
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .top-section {
+    width: calc(100% - 100px);
+    left: 20px;
+  }
+  .bottom-section {
+    width: calc(100% - 100px);
+    left: 50px;
+  }
+}
 </style>
