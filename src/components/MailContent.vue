@@ -10,8 +10,8 @@
         <div class="time-string" v-html="getTimestampString()"></div>
         <ArrowIcon class="arrow-icon"/>
       </div>
-      <div :id="`receiver-${uniqueIndex}`" class="receiver-box"></div>
-      <div v-if="hiddenReceiver > 0" class="hidden-receiver-tag">+{{hiddenReceiver}}</div>
+      <div :id="`recipient-${uniqueIndex}`" class="recipient-box"></div>
+      <div v-if="hiddenRecipient > 0" class="hidden-recipient-tag">+{{hiddenRecipient}}</div>
       <div class="title-box" v-html="content.title"></div>
     </div>
   </div>
@@ -41,7 +41,7 @@ export default {
       type: Object,
       required: true,
       validator(value) {
-        return ('sender' in value) && ('receiver' in value) && ('timestamp' in value)
+        return ('sender' in value) && ('recipient' in value) && ('timestamp' in value)
           && ('title' in value) && ('content' in value) && ('hasAttachment' in value);
       },
     },
@@ -56,46 +56,53 @@ export default {
       return isToday(mailDate) ? `${mailDate.getHours()}:${mailDate.getMinutes().toString().padStart(2, '0')}`
         : `${mailDate.toLocaleString('default', { month: 'short' })} ${mailDate.getDay()}`;
     },
+    updateRecipients() {
+      const recipientBox = document.getElementById(`recipient-${this.uniqueIndex}`);
+      const boxWidth = Number(getComputedStyle(recipientBox).width.slice(0, -2));
+      let currentString = this.content.recipient[0];
+      this.hiddenRecipient = this.content.recipient.length - 1;
+
+      const tempElement = document.createElement('span');
+      document.body.appendChild(tempElement);
+
+      tempElement.style.font = getComputedStyle(recipientBox).font;
+      tempElement.style.fontSize = getComputedStyle(recipientBox).fontSize;
+      tempElement.style.height = 'auto';
+      tempElement.style.width = 'auto';
+      tempElement.style.position = 'absolute';
+      tempElement.style.whiteSpace = 'no-wrap';
+
+      /* eslint no-plusplus: 0 */
+      for (let index = 1; index < this.content.recipient.length; index++) {
+        const newString = `${currentString}, ${this.content.recipient[index]}`;
+        tempElement.innerHTML = newString;
+        const newTextWidth = tempElement.clientWidth;
+
+        if (newTextWidth < boxWidth) {
+          currentString = newString;
+          this.hiddenRecipient--;
+        } else {
+          currentString += ', ...';
+          break;
+        }
+      }
+
+      recipientBox.innerHTML = currentString;
+      document.body.removeChild(tempElement);
+    },
   },
   data() {
     return {
-      hiddenReceiver: 0,
+      hiddenRecipient: 0,
     };
   },
   mounted() {
-    const receiverBox = document.getElementById(`receiver-${this.uniqueIndex}`);
-    const boxWidth = Number(getComputedStyle(receiverBox).width.slice(0, -2));
-    console.log(boxWidth);
-    let currentString = '';
-    this.hiddenReceiver = this.content.receiver.length;
-
-    const tempElement = document.createElement('span');
-    document.body.appendChild(tempElement);
-
-    tempElement.style.font = getComputedStyle(receiverBox).font;
-    tempElement.style.fontSize = getComputedStyle(receiverBox).fontSize;
-    tempElement.style.height = 'auto';
-    tempElement.style.width = 'auto';
-    tempElement.style.position = 'absolute';
-    tempElement.style.whiteSpace = 'no-wrap';
-
-    /* eslint no-plusplus: 0 */
-    for (let index = 0; index < this.content.receiver.length; index++) {
-      const newString = `${currentString}, ${this.content.receiver[index]}`;
-      tempElement.innerHTML = newString;
-      const newTextWidth = tempElement.clientWidth;
-
-      if (newTextWidth < boxWidth) {
-        currentString = newString;
-        this.hiddenReceiver--;
-      } else {
-        currentString += ', ...';
-        break;
-      }
-    }
-
-    receiverBox.innerHTML = currentString;
-    document.body.removeChild(tempElement);
+    this.updateRecipients();
+  },
+  watch: {
+    content() {
+      this.updateRecipients();
+    },
   },
 };
 </script>
@@ -162,7 +169,7 @@ export default {
   fill: #666666;
   display: inline-block;
 }
-.receiver-box {
+.recipient-box {
   width: calc(100% - 115px);
   height: auto;
   position: absolute;
@@ -173,7 +180,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hidden-receiver-tag {
+.hidden-recipient-tag {
   color: #FFF;
   background-color: #888888;
   height: fit-content;

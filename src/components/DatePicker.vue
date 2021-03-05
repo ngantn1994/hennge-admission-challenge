@@ -5,7 +5,7 @@
         <div class="calendar-box">
           <CalendarIcon class="calendar-icon"/>
         </div>
-        <div class="date-box">
+        <div class="date-box" contenteditable="true">
           2020/1/1 - 2020/1/1
         </div>
       </div>
@@ -74,7 +74,7 @@ export default {
   transform: translate(-50%, -50%);
 }
 .date-box {
-  width: calc(100% - 65px);
+  width: calc(100% - 68px);
   padding-left: 10px;
   height: 100%;
   line-height: 50px;
@@ -84,6 +84,9 @@ export default {
   text-align: left;
   font-size: 20px;
   color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
 }
 .search-box {
   height: 100%;

@@ -5,7 +5,7 @@
         Results: {{mailList.length}} mail(s)
       </div>
       <div class="sort-bar">
-        <div v-for="(filter, index) in filters" :key="index"
+        <div v-for="(filter, index) in filters" :key="index" @click="updateFilter(index)"
           :class="{'sort-bar-item': true, 'filter-active': index === activeFilter}">
           {{filter}}
           <ActiveIcon v-if="index === activeFilter" class="active-icon"/>
@@ -22,6 +22,11 @@
 <script>
 import ActiveIcon from '../assets/icon_arrow01.svg';
 import MailContent from './MailContent.vue';
+
+const SORT_SENDER = 'From';
+const SORT_RECIPIENT = 'To';
+const SORT_TITLE = 'Subject';
+const SORT_DATE = 'Date';
 
 export default {
   name: 'MailContainer',
@@ -41,9 +46,52 @@ export default {
   },
   data() {
     return {
-      filters: ['From', 'To', 'Subject', 'Date'],
-      activeFilter: Number.isInteger(Number(this.sortType)) ? Number(this.sortType) : 0,
+      filters: [SORT_SENDER, SORT_RECIPIENT, SORT_TITLE, SORT_DATE],
+      filterProperties: ['sender', 'recipient', 'title', 'timestamp'],
+      activeFilter: Number.isInteger(Number(this.sortType)) ? Number(this.sortType) : 3,
     };
+  },
+  mounted() {
+    this.updateFilter(this.activeFilter);
+  },
+  methods: {
+    updateFilter(value) {
+      this.activeFilter = value;
+      const activeProperty = this.filterProperties[this.activeFilter];
+      const activeFilterName = this.filters[this.activeFilter];
+
+      /* eslint no-else-return: 0 */
+      if (activeFilterName === SORT_DATE) {
+        this.mailList.sort(
+          (a, b) => {
+            const aDate = new Date(a[activeProperty]);
+            const bDate = new Date(b[activeProperty]);
+            // compare by newest mail first, so the newer the smaller
+            if (aDate.getTime() === bDate.getTime()) {
+              return 0;
+            } else {
+              return (aDate.getTime() < bDate.getTime()) ? 1 : -1;
+            }
+          },
+        );
+      } else if (activeFilterName === SORT_RECIPIENT) {
+        // since the recipients are stored in an array
+        // for now it'll be sort by the first recipient
+        this.mailList.sort(
+          (a, b) => {
+            const aFirstRecipient = a[activeProperty][0];
+            const bFirstRecipient = b[activeProperty][0];
+
+            return aFirstRecipient.toString().localeCompare(bFirstRecipient.toString());
+          },
+        );
+      } else {
+        // default: compare the value directly
+        this.mailList.sort(
+          (a, b) => (a[activeProperty].toString().localeCompare(b[activeProperty].toString())),
+        );
+      }
+    },
   },
 };
 </script>

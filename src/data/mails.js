@@ -2,7 +2,7 @@
 const mailList = [
   {
     sender: 'aaa@example.com',
-    receiver: ['zzz.zzz@example.com'],
+    recipient: ['zzz.zzz@example.com'],
     timestamp: '3/5/2021 00:20:00',
     title: '[ HR - 888 ] Notice of official announcement',
     content: 'test content',
@@ -10,7 +10,7 @@ const mailList = [
   },
   {
     sender: 'bbb.bbbb@example.com',
-    receiver: ['yyy@example.com'],
+    recipient: ['yyy@example.com'],
     timestamp: '3/5/2021 00:10:00',
     title: '[web:333] "Web Contact"',
     content: 'test content',
@@ -18,7 +18,7 @@ const mailList = [
   },
   {
     sender: 'ccc@example.com',
-    receiver: ['xxx@example.com', 'www.www@example.com'],
+    recipient: ['xxx@example.com', 'www.www@example.com'],
     timestamp: '3/5/2021 00:00:00',
     title: 'Happy New Year! Greetings for the New Year.',
     content: 'test content',
@@ -26,7 +26,7 @@ const mailList = [
   },
   {
     sender: 'ccc@example.com',
-    receiver: ['xxx@example.com', 'www.www@example.com', 'www.www@example.com', 'www.www@example.com'],
+    recipient: ['xxx@example.com', 'www.www@example.com', 'www.www@example.com', 'www.www@example.com'],
     timestamp: '1/1/2021 00:10:00',
     title: '[web:333] "Web Contact"',
     content: 'test content',

@@ -5,7 +5,7 @@
     </div>
     <div class="bottom-section">
       <MailContainer class="mail-container"
-        :mailList="listOfMail" :sortType="2"/>
+        :mailList="listOfMail" :sortType="3"/>
     </div>
   </div>
 </template>
