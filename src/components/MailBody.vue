@@ -12,7 +12,9 @@
       <MailIcon class="mail-icon"/>
       <div class="address-box">
         <div class="sender-box" v-html="content[properties.sender]"></div>
-        <div class="recipient-box" v-html="content[properties.recipient].join(', ')"></div>
+        <div class="recipient-box"
+          v-html="content[properties.recipient]
+            ? content[properties.recipient].join(', ') : ''"></div>
       </div>
       <div class="title-box">
         {{content[properties.title]}}
