@@ -3,6 +3,10 @@
 The current UI is compacted, but it won't be easy to find a specific email if the amount of emails that need to be checked is big.
 So I would like to add additional search boxes and filters to support it.
 
+## 0. Add an actual date-picker box below the current search-by-date box
+
+This might not be an improvement, but what should be done anyway in the real case. By clicking the calendar icon, a date picker should be opened which allowed users to select the date from it instead of typing in like what I did right now.
+
 ## 1. Additional search box
 
 A search box that allowed users to search by keywords or specific sender can be added in the search box area.
