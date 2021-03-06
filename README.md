@@ -1,6 +1,12 @@
 # hennge-admission-challenge
 Nguyen Tuyet Ngan's solution to HENNGE Admission Challenge 2021
 
+![](https://ntuyetngan.com/public/hennge-admission-challenge/sample-3.PNG)
+
+![](https://ntuyetngan.com/public/hennge-admission-challenge/sample-4.PNG)
+
+![](https://ntuyetngan.com/public/hennge-admission-challenge/sample-5.PNG)
+
 Project init by VueCLI
 
 ## Project setup
