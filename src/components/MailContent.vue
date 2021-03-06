@@ -90,7 +90,7 @@ export default {
       if (isToday(mailDate)) {
         return `${mailDate.getHours()}:${mailDate.getMinutes().toString().padStart(2, '0')}`;
       } else if (isThisYear(mailDate)) {
-        return `${mailDate.toLocaleString('default', { month: 'short' })} ${mailDate.getDay()}`;
+        return `${mailDate.toLocaleString('default', { month: 'short' })} ${mailDate.getDate()}`;
       }
 
       return getFormattedDate(mailDate);
@@ -207,6 +207,7 @@ export default {
   color: rgba(0, 0, 0, 0);
   position: relative;
   transition: 200ms height ease-in-out, 200ms color ease-in-out, 200ms padding-top ease-in-out;
+  font-size: 0px;
 }
 .mail-body-show {
   border-bottom: 2px solid #d1d1d1;
@@ -216,6 +217,7 @@ export default {
   color: rgba(0, 0, 0, 100);
   overflow: hidden;
   text-align: justify;
+  font-size: 18px;
 }
 .mail-body-more {
   background-color: #FFF;

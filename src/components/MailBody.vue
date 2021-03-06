@@ -85,6 +85,7 @@ export default {
   left: 45px;
   text-align: center;
   font-weight: bold;
+  cursor: pointer;
 }
 .back-arrow {
   border: 15px solid transparent;

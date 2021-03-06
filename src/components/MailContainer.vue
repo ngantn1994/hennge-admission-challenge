@@ -193,6 +193,7 @@ export default {
   color: #666666;
   font-size: 18px;
   font-weight: bold;
+  position: relative;
 }
 .bigger-text {
   font-size: 24px;
