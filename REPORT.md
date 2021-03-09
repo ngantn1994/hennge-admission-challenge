@@ -28,5 +28,15 @@ And the part to custom the small details here and there cost me a little more ti
 
 I also changed the code to not hard code the JSON properties but to read it from const instead (in case of the JSON changes and the properties changes). There might be better ways to not hard code the current responsive values too but I could not think of it right now, so I'll continue to think about it.
 
+## 5. Mission 4 - submission
+
+It took me many tries to finally success in submitting it. I modified the given Java file from the RFC document, but the result was wrong.
+
+I can finally do it after modify two things:
+- get the first 10 digits from the hash instead of the last 10 like the example.
+- use the original hexa String instead of trying to repeat it until it has 64 bytes like the example (the given example string for SHA-512 was 64-bytes string).
+
+With the right TOTP, submitting it using Postman was easy.
+
 **It was really fun coding it, and I would love to join in more challenges in the future.**
 **Thank you for the time to read my application, I really appreciate it.**
